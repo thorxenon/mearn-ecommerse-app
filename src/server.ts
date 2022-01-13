@@ -1,18 +1,21 @@
-import express, { Request, Response,ErrorRequestHandler, urlencoded, NextFunction } from 'express';
+import express, { ErrorRequestHandler, Request, Response } from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import routesApi from './routes/standard';
+import authRoute from './routes/auth';
+import { mongoConnect } from './config/database';
 
 dotenv.config();
 
 const server = express();
 
+mongoConnect();
+
 server.use(cors());
 server.use(express.static(path.join(__dirname, '../public')));
 server.use(express.urlencoded({extended: true}));
 
-server.use(routesApi);
+server.use(authRoute);
 
 server.use((req, res)=>{
     res.status(404);
