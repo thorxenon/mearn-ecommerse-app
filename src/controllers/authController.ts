@@ -20,7 +20,7 @@ export const signUp = async(req: Request, res: Response) =>{
         const newUser = await User.create({name, email, password: hash});
         
         const token = jwt.sign(
-            {id: newUser.id, email: newUser.email},
+            {id: newUser._id },
             process.env.JWT_SECRET_KEY as string,
             {expiresIn:'2h'}
         );
@@ -30,5 +30,39 @@ export const signUp = async(req: Request, res: Response) =>{
     }else{
         res.status(400);
         res.json({msg: 'User already exists'});
-    }
-}
+    };
+};
+
+export const login = async(req: Request, res: Response) =>{
+    let { email, password } = req.body;
+
+    if(email && password){
+        const user = await User.findOne({email});
+
+        if(user){
+            if(await bcrypt.compare(password, user.password)){
+                const token = jwt.sign(
+                    {id: user._id},
+                    process.env.JWT_SECRET_KEY as string,
+                    {expiresIn:'2h'}
+                );
+                return res.json({
+                    token,
+                    user:{
+                        id: user._id,
+                        name: user.name,
+                        email: user.email
+                    }
+                })
+            }else{
+                res.status(400).json({ msg: 'E-mail or password invalids'});
+            }
+        }else{
+            res.status(400).json({ msg: 'E-mail or password invalids'});
+        };
+    };
+};
+
+/*export const getUser = async(req: Request, res: Response) =>{
+    const user = await User.findBy
+};*/
