@@ -63,6 +63,6 @@ export const login = async(req: Request, res: Response) =>{
     };
 };
 
-/*export const getUser = async(req: Request, res: Response) =>{
-    const user = await User.findBy
-};*/
+export const getUser = (req: Request, res: Response) =>{
+    res.json({msg: 'voce estar autorizado!'});
+};

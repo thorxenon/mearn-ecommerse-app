@@ -4,21 +4,30 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const auth = async(req: Request, res: Response, next: NextFunction) =>{
-    const token = req.header('x-auth-token');
+export const auth = async(req: Request, res: Response, next: NextFunction) =>{
+    let success = false;
+    let payload;
+    const token = <string>req.headers["auth"];
+        
+    if(token){
+        try{
+            payload = <any>jwt.verify(token, process.env.JWT_SECRET_KEY as string);
+            res.locals.payload = payload;
+            success = true;
+        }catch(err){
+            return res.status(401).json({msg: 'access denied!'});
+        };
+    };
 
-    //verify json token
-    if(!token){
-        return res.status(401).json({msg: 'No token, authorization denied.'});
-    }
-
-    try{
-        const decoded = jwt.verify(token, process.env.JTW_SECRET_KEY as string );
-
-        //adding user from payload
-        //req.body.user = decoded;
+    if(success){
+        const { userId, username } = payload;
+        const newToken = jwt.sign({userId, username}, process.env.JWT_SECRET_KEY as string, {
+            expiresIn: "2h"
+        });
+        res.setHeader('token', newToken);
         next();
-    }catch(e){
-        res.status(400).json({msg:'Token is not valid.'});
-    }
-}
+    }else{
+        res.status(403)
+        return res.json({error: 'Not authorized!'});
+    };
+};
