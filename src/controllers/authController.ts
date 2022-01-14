@@ -53,7 +53,7 @@ export const login = async(req: Request, res: Response) =>{
                         name: user.name,
                         email: user.email
                     }
-                })
+                });
             }else{
                 res.status(400).json({ msg: 'E-mail or password invalids'});
             }
@@ -63,6 +63,11 @@ export const login = async(req: Request, res: Response) =>{
     };
 };
 
-export const getUser = (req: Request, res: Response) =>{
-    res.json({msg: 'voce estar autorizado!'});
+export const getUser = async(req: Request, res: Response) =>{
+    let payload;
+    let token = req.headers['auth'];
+    payload = <any>jwt.verify(token as string, process.env.JWT_SECRET_KEY as string);
+    res.locals.payload = payload;
+    const user = await User.findById(payload.id);
+    return res.json({id: user._id, name: user.name, email: user.email });
 };

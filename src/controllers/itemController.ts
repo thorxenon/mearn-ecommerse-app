@@ -15,16 +15,12 @@ export const postItem = async(req: Request, res: Response) =>{
     res.json({newItem});
 }
 
-/*export const updateItem = async(req: Request, res: Response) =>{
-    const updateItem = await Item.findByIdAndUpdate(req.params.id,{req.params: req.body}, req.body ).then(function(item){
-        Item.findOne({_id: req.params.id}).then(function(item){
-            res.json({item})
-        })
-    })
-}*/
+export const updateItem = async(req: Request, res: Response) =>{
+    const itemUpdated = await Item.findById(req.params.id).update(req.body);
+    res.json({});
+};
 
 export const deleteItem = async(req: Request, res: Response) =>{
-    const item = await Item.findByIdAndDelete({_id: req.params.id}).then(function(item){
-        res.json({success: true});
-    });
+    const item = await Item.findByIdAndDelete({_id: req.params.id});
+    res.json({success: true});
 };

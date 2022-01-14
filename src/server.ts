@@ -3,6 +3,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import authRoute from './routes/auth';
+import itemRoute from './routes/item';
 import { mongoConnect } from './config/database';
 
 dotenv.config();
@@ -16,6 +17,7 @@ server.use(express.static(path.join(__dirname, '../public')));
 server.use(express.urlencoded({extended: true}));
 
 server.use(authRoute);
+server.use(itemRoute);
 
 server.use((req, res)=>{
     res.status(404);
