@@ -2,8 +2,10 @@ import express, { ErrorRequestHandler, Request, Response } from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import authRoute from './routes/auth';
-import itemRoute from './routes/item';
+import authRoutes from './routes/auth';
+import itemRoutes from './routes/item';
+import cartRoutes from './routes/cart';
+import orderRoutes from './routes/order';
 import { mongoConnect } from './config/database';
 
 dotenv.config();
@@ -16,8 +18,10 @@ server.use(cors());
 server.use(express.static(path.join(__dirname, '../public')));
 server.use(express.urlencoded({extended: true}));
 
-server.use(authRoute);
-server.use(itemRoute);
+server.use('/api'+authRoutes);
+server.use('/api'+itemRoutes);
+server.use('/api'+cartRoutes);
+server.use('/api'+orderRoutes);
 
 server.use((req, res)=>{
     res.status(404);

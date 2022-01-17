@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Item from '../models/Item';
+import  mongoose  from 'mongoose';
 
 export const getItems = async(req: Request, res: Response) =>{
     const items = await Item.find().sort({date:-1});
@@ -17,7 +18,15 @@ export const postItem = async(req: Request, res: Response) =>{
 
 export const updateItem = async(req: Request, res: Response) =>{
     const itemUpdated = await Item.findById(req.params.id).update(req.body);
-    res.json({});
+
+    if(!mongoose.Types.ObjectId.isValid(req.params.id)){
+        return res.json({error: 'Id number incorrect.'});
+    }
+
+    if(!itemUpdated){
+        res.json({msg: "Product not found."});
+    }
+    return res.json({item: req.body});
 };
 
 export const deleteItem = async(req: Request, res: Response) =>{

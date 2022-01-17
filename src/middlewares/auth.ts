@@ -25,7 +25,7 @@ export const auth = async(req: Request, res: Response, next: NextFunction) =>{
             expiresIn: "2h"
         });
         res.setHeader('token', newToken);
-        console.log(payload);
+        res.locals.user = payload
         next();
     }else{
         res.status(403)
